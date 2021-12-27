@@ -1,5 +1,6 @@
 pipeline {
-  agent { label 'Ubuntu_Node' }
+  agent any
+  //{ label 'Ubuntu_Node' }
  /* environment {
    ANSIBLE_PRIVATE_KEY=credentials('mariadb-private-key') 
   } */
