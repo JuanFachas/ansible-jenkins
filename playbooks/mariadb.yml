@@ -28,6 +28,11 @@
         state: enabled
         immediate: yes
 
+    - name: Import MariaDB GPG key
+      apt_key:
+        url: https://mariadb.org/mariadb_release_signing_key.asc
+        state: present
+
     - name: Add MariaDB APT repository
       apt_repository:
         repo: deb [arch=amd64] http://ftp.osuosl.org/pub/mariadb/repo/10.6/ubuntu focal main
