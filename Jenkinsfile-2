@@ -2,13 +2,13 @@ pipeline {
     agent { label 'Ubuntu_Node' }
 
     stages {
-        stage('Instalar colecciones Ansible') {
+        stage('Instalar colecciones') {
             steps {
                 sh 'ansible-galaxy collection install -r requirements.yml'
             }
         }
 
-        stage('Ejecutar playbook MariaDB') {
+        stage('Ejecutar playbook') {
             steps {
                 sh '''
                     ansible-playbook -i inventory/mariadb.hosts \
