@@ -2,49 +2,54 @@
   hosts: mariadbs
   become: yes
   tasks:
-    - name: enable and start firewalld service
+    - name: Ensure firewalld is installed
+      apt:
+        name: firewalld
+        state: present
+        update_cache: yes
+
+    - name: Enable and start firewalld service
       systemd:
         name: firewalld
         state: started
         enabled: yes
 
-    - name: permit traffic in default zone on port 22/tcp
+    - name: Permit SSH (port 22)
       ansible.posix.firewalld:
         port: 22/tcp
         permanent: yes
         state: enabled
         immediate: yes
 
-    - name: permit traffic in default zone on port 3306/tcp
+    - name: Permit MariaDB port (3306)
       ansible.posix.firewalld:
         port: 3306/tcp
         permanent: yes
         state: enabled
         immediate: yes
 
-    - name: MariaDB yum repository
-      yum_repository:
-        name: MariaDB
-        description: MariaDB
-        baseurl: http://yum.mariadb.org/10.6.2/centos$releasever-amd64
-        enabled: yes
-        gpgcheck: yes
-        gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    - name: Add MariaDB APT repository
+      apt_repository:
+        repo: deb [arch=amd64] http://ftp.osuosl.org/pub/mariadb/repo/10.6/ubuntu focal main
+        state: present
+        filename: mariadb
 
     - name: Install MariaDB server
-      yum:
-        name: MariaDB-server
-        state: latest
+      apt:
+        name: mariadb-server
+        state: present
+        update_cache: yes
 
-    - name: start MariaDB service
+    - name: Start MariaDB service
       systemd:
         name: mariadb
         state: started
+        enabled: yes
 
-    - name: verify installation
-      ansible.builtin.command: mysql --version
+    - name: Verify installation
+      command: mysql --version
       register: mysql_version
 
-    - name: mostrar versión de MariaDB
+    - name: Mostrar versión de MariaDB
       debug:
         var: mysql_version.stdout_lines
