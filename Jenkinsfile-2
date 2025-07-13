@@ -1,15 +1,20 @@
 pipeline {
-  agent any
-  //{ label 'Ubuntu_Node' }
- /* environment {
-   ANSIBLE_PRIVATE_KEY=credentials('mariadb-private-key') 
-  } */
-  stages {
-    stage('Hello') {
-      steps {
-        sh 'ansible-galaxy collection install -r requirements.yml'
-        //sh 'ansible-playbook -i inventory/mariadb.hosts --private-key=$ANSIBLE_PRIVATE_KEY playbooks/mariadb.yml'
-      }
+    agent { label 'Ubuntu_Node' }
+
+    stages {
+        stage('Instalar colecciones Ansible') {
+            steps {
+                sh 'ansible-galaxy collection install -r requirements.yml'
+            }
+        }
+
+        stage('Ejecutar playbook MariaDB') {
+            steps {
+                sh '''
+                    ansible-playbook -i inventory/mariadb.hosts \
+                                     playbooks/mariadb.yml
+                '''
+            }
+        }
     }
-  }
 }
